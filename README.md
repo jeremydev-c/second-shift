@@ -24,7 +24,7 @@ npm test
 ## Notes
 
 - Fit scores and impact numbers use stated planning assumptions (`src/lib/fit.ts`), not Free Geek Toronto data.
-- Pledges are stored in `.data/pledges.json` during development.
+- Pledges are stored in MongoDB when `MONGODB_URI` is set (database `MONGODB_DB`, default `second_shift`), otherwise in `.data/pledges.json`.
 - Prototype only: not an official Free Geek Toronto service.
 
 MIT licence.

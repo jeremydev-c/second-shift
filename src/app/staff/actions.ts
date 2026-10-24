@@ -48,7 +48,11 @@ export async function advance(id: string): Promise<{ error?: string }> {
     if (p.serials.length === 0) return { error: "Record the serial numbers first" };
     if (!p.wipeMethod || !p.wipedBy) return { error: "Record the wipe method and who did it first" };
   }
-  await updatePledge(id, { status: next });
+  try {
+    await updatePledge(id, { status: next });
+  } catch (e) {
+    return { error: (e as Error).message };
+  }
   revalidatePath("/staff");
   revalidatePath(`/staff/${id}`);
   revalidatePath(`/pledge/${id}`);
