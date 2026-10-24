@@ -1,0 +1,93 @@
+@import "tailwindcss";
+
+/* Transit-ticket look: civic navy signage, signal orange, cool platform grey. */
+:root {
+  --bg: #eef1f4;
+  --surface: #ffffff;
+  --ink: #0f1d2e;
+  --muted: #5a6778;
+  --line: #d3dae2;
+  --brand: #123a63;
+  --brand-ink: #ffffff;
+  --signal: #e8682a;
+  --signal-ink: #ffffff;
+  --great: #157a4a;
+  --good: #b26a00;
+  --recycle: #66707c;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-brand: var(--brand);
+  --color-brand-ink: var(--brand-ink);
+  --color-signal: var(--signal);
+  --color-signal-ink: var(--signal-ink);
+  --color-great: var(--great);
+  --color-good: var(--good);
+  --color-recycle: var(--recycle);
+  --font-sans: var(--font-body);
+  --font-display: var(--font-display);
+  --font-mono: var(--font-mono);
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+}
+
+.display {
+  @apply font-display font-semibold uppercase tracking-tight;
+}
+.eyebrow {
+  @apply font-mono text-xs uppercase tracking-[0.18em] text-muted;
+}
+.field {
+  @apply w-full rounded-sm border border-line bg-surface px-3 py-2 text-ink outline-none focus:border-brand focus:ring-2 focus:ring-brand/20;
+}
+.label {
+  @apply mb-1 block font-mono text-[11px] uppercase tracking-[0.14em] text-muted;
+}
+.btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-sm bg-signal px-6 py-3 font-display text-lg font-semibold uppercase tracking-wide text-signal-ink hover:brightness-95 disabled:opacity-50;
+}
+.btn-ghost {
+  @apply inline-flex items-center justify-center rounded-sm border-2 border-brand px-5 py-2.5 font-display text-lg font-semibold uppercase tracking-wide text-brand hover:bg-brand/5;
+}
+
+/* A ticket: solid card with semicircle notches cut where the stub tears off. */
+.ticket {
+  @apply relative rounded-md bg-surface shadow-[0_1px_0_var(--line),0_8px_24px_-12px_rgb(15_29_46/0.25)];
+}
+.ticket-tear {
+  @apply relative my-0 border-t-2 border-dashed border-line;
+}
+.ticket-tear::before,
+.ticket-tear::after {
+  content: "";
+  @apply absolute top-1/2 h-5 w-5 -translate-y-1/2 rounded-full bg-bg;
+}
+.ticket-tear::before {
+  left: -10px;
+}
+.ticket-tear::after {
+  right: -10px;
+}
+
+/* Numbered section badge, like a route bullet. */
+.route-dot {
+  @apply inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand font-display text-base font-semibold text-brand-ink;
+}
+
+@media print {
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  body {
+    background: #fff;
+  }
+}
