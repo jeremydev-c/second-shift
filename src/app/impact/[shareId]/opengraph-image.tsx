@@ -1,21 +1,11 @@
 import { ImageResponse } from "next/og";
 import { impactOf, isShareable } from "@/lib/impact";
+import { condensed } from "@/lib/og";
 import { getPledgeByShareId } from "@/lib/store";
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 export const alt = "Second Shift impact card";
-
-// Barlow Condensed to match the site; falls back to the default font if Google Fonts can't be reached.
-async function condensed(): Promise<ArrayBuffer | undefined> {
-  try {
-    const css = await (await fetch("https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700")).text();
-    const url = css.match(/src: url\((.+?)\) format\('(?:opentype|truetype)'\)/)?.[1];
-    return url ? await (await fetch(url)).arrayBuffer() : undefined;
-  } catch {
-    return undefined;
-  }
-}
 
 // The card LinkedIn shows when a partner shares their impact page.
 export default async function Image({ params }: { params: Promise<{ shareId: string }> }) {
