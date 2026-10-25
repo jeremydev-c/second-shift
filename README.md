@@ -2,6 +2,8 @@
 
 A business laptop partner portal for **Free Geek Toronto**, built for the FUSE Society Blueprint 2026 case competition.
 
+**Live:** https://second-shift-omega.vercel.app
+
 Small and medium businesses pledge batches of retired work laptops, see instantly whether Free Geek Toronto can refurbish them, and book a drop-off or pickup. Staff track each batch on a depot board, record serial numbers and the wipe method, and the business gets a printable data-sanitisation certificate.
 
 ## Run it
