@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { VERDICT_COPY } from "@/lib/fit";
+import { isShareable } from "@/lib/impact";
 import { formatSlot } from "@/lib/slots";
 import { getPledge } from "@/lib/store";
 import { CONDITIONS, STATUSES, STATUS_LABELS } from "@/lib/types";
@@ -76,9 +77,14 @@ export default async function PledgePage({ params }: { params: Promise<{ id: str
         </div>
       </article>
 
-      {step >= STATUSES.indexOf("wiped") && (
-        <Link href={`/pledge/${p.id}/certificate`} className="btn mt-6">Download your data-wipe certificate</Link>
-      )}
+      <div className="mt-6 flex flex-wrap gap-3">
+        {step >= STATUSES.indexOf("wiped") && (
+          <Link href={`/pledge/${p.id}/certificate`} className="btn">Download your data-wipe certificate</Link>
+        )}
+        {isShareable(p) && p.shareId && (
+          <Link href={`/impact/${p.shareId}`} className="btn-ghost">Share your impact</Link>
+        )}
+      </div>
       {p.handover.type === "dropoff" && step === 0 && (
         <p className="mt-6 text-sm text-muted">Please bring chargers if you have them. Data is wiped before anything else happens to your laptops.</p>
       )}

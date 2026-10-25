@@ -40,6 +40,10 @@ const mongo = {
     const d = await (await collection()).findOne({ _id: id });
     return d ? fromDoc(d) : undefined;
   },
+  async byShare(shareId: string) {
+    const d = await (await collection()).findOne({ shareId });
+    return d ? fromDoc(d) : undefined;
+  },
   async create(p: Pledge) {
     const { id, ...rest } = p;
     await (await collection()).insertOne({ _id: id, ...rest });
@@ -109,6 +113,9 @@ const file = {
   async get(id: string) {
     return (await readAll()).find((p) => p.id === id);
   },
+  async byShare(shareId: string) {
+    return (await readAll()).find((p) => p.shareId === shareId);
+  },
   create(pledge: Pledge) {
     return withLock(async () => {
       const all = await readAll();
@@ -148,6 +155,7 @@ const store = () => (process.env.MONGODB_URI ? mongo : file);
 
 export const listPledges = (): Promise<Pledge[]> => store().list();
 export const getPledge = (id: string): Promise<Pledge | undefined> => store().get(id);
+export const getPledgeByShareId = (shareId: string): Promise<Pledge | undefined> => store().byShare(shareId);
 export const createPledge = (p: Pledge): Promise<Pledge> => store().create(p);
 export const updatePledge = (id: string, patch: PledgePatch): Promise<Pledge> => store().update(id, patch);
 export const takenSlots = (): Promise<Record<string, number>> => store().taken();

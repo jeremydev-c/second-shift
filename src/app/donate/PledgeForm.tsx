@@ -107,6 +107,10 @@ export default function PledgeForm({ slots }: { slots: Slot[] }) {
             <Text id="email" label="Work email" type="email" e={e} v={v} />
             <Text id="postalCode" label="Postal code" e={e} v={v} placeholder="M6J 0A8" />
           </div>
+          <label className="flex items-start gap-3 text-sm">
+            <input type="checkbox" name="listOnWall" value="yes" defaultChecked={v.listOnWall === "yes"} className="mt-1 h-4 w-4 accent-[var(--brand)]" />
+            <span>Show our company name on the public <strong>partner wall</strong> once Free Geek receives our laptops.</span>
+          </label>
         </fieldset>
 
         <button className="btn w-full sm:w-auto" disabled={pending}>{pending ? "Sending…" : "Pledge these laptops"}</button>

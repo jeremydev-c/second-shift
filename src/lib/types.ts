@@ -54,6 +54,9 @@ export const STATUS_LABELS: Record<Status, string> = {
 
 export type Pledge = {
   id: string;
+  // Public id for the shareable impact page, so sharing it never reveals the private tracker link.
+  shareId: string;
+  listOnWall: boolean;
   createdAt: string;
   company: string;
   contactName: string;

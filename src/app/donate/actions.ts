@@ -27,6 +27,7 @@ const schema = z
     handover: z.enum(["dropoff", "pickup"]),
     slot: z.string().optional(),
     address: z.string().trim().max(200).optional(),
+    listOnWall: z.literal("yes").optional(),
   })
   .superRefine((v, ctx) => {
     if (v.handover === "dropoff" && !v.slot) ctx.addIssue({ code: "custom", path: ["slot"], message: "Pick a drop-off time" });
@@ -62,6 +63,8 @@ export async function submitPledge(_prev: PledgeState, form: FormData): Promise<
   const id = newId();
   await createPledge({
     id,
+    shareId: newId(),
+    listOnWall: v.listOnWall === "yes",
     createdAt: now,
     company: v.company,
     contactName: v.contactName,

@@ -16,6 +16,9 @@ npm run dev
 - `/pledge/[id]`: the business's private "shift ticket" tracker
 - `/pledge/[id]/certificate`: data-wipe certificate (once wiped)
 - `/staff`: depot board (staff password)
+- `/impact/[shareId]`: public impact page with a LinkedIn card
+- `/partners`: partner wall (opt-in names, tiers)
+- `/check`: household "Can I donate this?" checker
 
 ```bash
 npm test
