@@ -44,6 +44,10 @@ export default function RootLayout({
           <div className="mx-auto flex max-w-5xl flex-wrap justify-between gap-2 px-4 py-6 font-mono text-xs uppercase tracking-[0.14em] text-muted">
             <span>A partner programme for Free Geek Toronto</span>
             <span>180 Sudbury St, Unit C3 · Drop-offs Fri–Sat 12–5pm</span>
+            <nav className="flex gap-4">
+              <Link href="/privacy" className="hover:text-ink">Privacy</Link>
+              <Link href="/terms" className="hover:text-ink">Terms</Link>
+            </nav>
           </div>
         </footer>
       </body>

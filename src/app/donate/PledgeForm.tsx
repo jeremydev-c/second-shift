@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState, useMemo, useState } from "react";
 import { assessBatch, VERDICT_COPY } from "@/lib/fit";
 import type { Slot } from "@/lib/slots";
@@ -113,7 +114,13 @@ export default function PledgeForm({ slots }: { slots: Slot[] }) {
           </label>
         </fieldset>
 
-        <button className="btn w-full sm:w-auto" disabled={pending}>{pending ? "Sending…" : "Pledge these laptops"}</button>
+        <div className="space-y-3">
+          <button className="btn w-full sm:w-auto" disabled={pending}>{pending ? "Sending…" : "Pledge these laptops"}</button>
+          <p className="text-xs text-muted">
+            By pledging you agree to the <Link href="/terms" className="underline">terms</Link> and{" "}
+            <Link href="/privacy" className="underline">privacy policy</Link>.
+          </p>
+        </div>
       </div>
 
       <aside className="lg:sticky lg:top-6 lg:self-start">
