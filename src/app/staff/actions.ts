@@ -8,7 +8,9 @@ import { getPledge, updatePledge } from "@/lib/store";
 import { STATUSES, WIPE_METHODS, type Status, type WipeMethod } from "@/lib/types";
 
 export async function login(_prev: { error?: string }, form: FormData): Promise<{ error?: string }> {
-  if (!(await signIn(String(form.get("password") ?? "")))) return { error: "That password isn't right." };
+  const result = await signIn(String(form.get("password") ?? ""));
+  if (result === "locked") return { error: "Too many wrong attempts. Try again in 15 minutes." };
+  if (result === "wrong") return { error: "That password isn't right." };
   redirect("/staff");
 }
 

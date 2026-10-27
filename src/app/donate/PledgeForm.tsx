@@ -31,7 +31,7 @@ export default function PledgeForm({ slots }: { slots: Slot[] }) {
   const handover = canPickup ? chosenHandover : "dropoff";
 
   return (
-    <form action={action} className="mt-8 grid gap-8 lg:grid-cols-[1fr_340px]">
+    <form action={action} className="mt-8 grid gap-8 pb-24 lg:grid-cols-[1fr_340px] lg:pb-0">
       <div className="space-y-8">
         <fieldset className="ticket space-y-4 p-5" aria-labelledby="step-1">
           <h2 id="step-1" className="flex items-center gap-3"><span className="route-dot">1</span><span className="display text-2xl">The laptops</span></h2>
@@ -123,7 +123,22 @@ export default function PledgeForm({ slots }: { slots: Slot[] }) {
         </div>
       </div>
 
-      <aside className="lg:sticky lg:top-6 lg:self-start">
+      {/* On phones the full ticket would sit below the form, so a compact live bar stays in view instead. */}
+      <div className="fixed inset-x-0 bottom-0 z-10 border-t border-line bg-surface shadow-[0_-8px_24px_-12px_rgb(15_29_46/0.25)] lg:hidden" aria-live="polite">
+        <div className={`h-1.5 ${VERDICT_BAR[fit.verdict]}`} />
+        <div className="flex items-center justify-between gap-4 px-4 py-3">
+          <div>
+            <p className="eyebrow">Fit check · live</p>
+            <p className={`display text-2xl ${VERDICT_COLOR[fit.verdict]}`}>{VERDICT_COPY[fit.verdict].title}</p>
+          </div>
+          <div className="text-right">
+            <p className="display text-2xl text-brand">{fit.peopleConnected}</p>
+            <p className="text-xs text-muted">people could get a computer</p>
+          </div>
+        </div>
+      </div>
+
+      <aside className="hidden lg:sticky lg:top-6 lg:block lg:self-start">
         <div className="ticket overflow-hidden" aria-live="polite">
           <div className={`h-2 ${VERDICT_BAR[fit.verdict]}`} />
           <div className="p-5">

@@ -1,7 +1,8 @@
 import "server-only";
 import { createHmac, timingSafeEqual } from "crypto";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { recentLoginFailures, recordLoginFailure } from "./store";
 
 // One shared staff password (STAFF_PASSWORD) is enough for a 6-person team; the cookie holds an HMAC of it,
 // so changing the password signs everyone out.
@@ -32,8 +33,16 @@ export async function requireStaff() {
   if (!(await isStaff())) redirect("/staff/login");
 }
 
-export async function signIn(password: string) {
-  if (!same(password, secret())) return false;
+const MAX_FAILURES = 10;
+
+// "locked" after too many wrong passwords from one address in the window, so the password can't be guessed by brute force.
+export async function signIn(password: string): Promise<"ok" | "wrong" | "locked"> {
+  const ip = (await headers()).get("x-forwarded-for")?.split(",")[0].trim() || "unknown";
+  if ((await recentLoginFailures(ip)) >= MAX_FAILURES) return "locked";
+  if (!same(password, secret())) {
+    await recordLoginFailure(ip);
+    return "wrong";
+  }
   (await cookies()).set(COOKIE, token(), {
     httpOnly: true,
     sameSite: "lax",
@@ -41,7 +50,7 @@ export async function signIn(password: string) {
     path: "/",
     maxAge: 60 * 60 * 12,
   });
-  return true;
+  return "ok";
 }
 
 export async function signOut() {

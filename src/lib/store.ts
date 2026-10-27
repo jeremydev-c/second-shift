@@ -21,13 +21,16 @@ type PledgeDoc = Omit<Pledge, "id"> & { _id: string };
 // Keep one client across hot reloads and serverless invocations.
 const g = globalThis as unknown as { _ssMongo?: Promise<MongoClient> };
 
-async function collection(): Promise<Collection<PledgeDoc>> {
+async function database() {
   g._ssMongo ??= new MongoClient(process.env.MONGODB_URI!, { serverSelectionTimeoutMS: 10_000 }).connect().catch((e) => {
     g._ssMongo = undefined; // allow a retry on the next request
     throw e;
   });
-  const col = (await g._ssMongo).db(process.env.MONGODB_DB || "second_shift").collection<PledgeDoc>("pledges");
-  return col;
+  return (await g._ssMongo).db(process.env.MONGODB_DB || "second_shift");
+}
+
+async function collection(): Promise<Collection<PledgeDoc>> {
+  return (await database()).collection<PledgeDoc>("pledges");
 }
 
 const fromDoc = ({ _id, ...rest }: PledgeDoc): Pledge => ({ id: _id, ...rest });
@@ -159,3 +162,33 @@ export const getPledgeByShareId = (shareId: string): Promise<Pledge | undefined>
 export const createPledge = (p: Pledge): Promise<Pledge> => store().create(p);
 export const updatePledge = (id: string, patch: PledgePatch): Promise<Pledge> => store().update(id, patch);
 export const takenSlots = (): Promise<Record<string, number>> => store().taken();
+
+/* ---------- Failed staff sign-ins ---------- */
+
+// Kept in the database in production so every serverless instance sees the same count.
+export const LOGIN_WINDOW_MS = 15 * 60 * 1000;
+const localFailures = new Map<string, number[]>();
+let ttlReady = false;
+
+async function failures() {
+  const col = (await database()).collection<{ key: string; at: Date }>("login_failures");
+  if (!ttlReady) {
+    await col.createIndex({ at: 1 }, { expireAfterSeconds: LOGIN_WINDOW_MS / 1000 });
+    ttlReady = true;
+  }
+  return col;
+}
+
+export async function recentLoginFailures(key: string): Promise<number> {
+  const since = Date.now() - LOGIN_WINDOW_MS;
+  if (!process.env.MONGODB_URI) return (localFailures.get(key) ?? []).filter((t) => t > since).length;
+  return (await failures()).countDocuments({ key, at: { $gt: new Date(since) } });
+}
+
+export async function recordLoginFailure(key: string): Promise<void> {
+  if (!process.env.MONGODB_URI) {
+    localFailures.set(key, [...(localFailures.get(key) ?? []), Date.now()]);
+    return;
+  }
+  await (await failures()).insertOne({ key, at: new Date() });
+}
